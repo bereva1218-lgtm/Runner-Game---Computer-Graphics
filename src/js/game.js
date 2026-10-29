@@ -70,7 +70,10 @@ const SOLIDOS = new Set(["#", "B", "G", "S", "C", "K", "F"]);
 const COLOR_CIELO = 0x6ec6ff;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(COLOR_CIELO);
+const texFondo = new THREE.TextureLoader().load('./src/img/texture/fondo.jpg');
+texFondo.colorSpace = THREE.SRGBColorSpace;
+scene.background = texFondo;
+
 // FOG
 scene.fog = new THREE.Fog(COLOR_CIELO, 25, 60);
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -155,16 +158,19 @@ const textureLoader = new THREE.TextureLoader();
 const texTierra = textureLoader.load('./src/img/texture/ground.jpg');
 const texSuelo = textureLoader.load('./src/img/texture/pasto.jpg');
 const texLadrillo = textureLoader.load('./src/img/texture/ladrillo.jpg');
-const texSorpresa = textureLoader.load('./src/img/texture/sorpresa.jpg')
+const texSorpresa = textureLoader.load('./src/img/texture/sorpresa.jpg');
+const textFondo = textureLoader.load('./src/img/texture/fondo.jpg');
 // Colores correctos (evita que las texturas se vean lavadas)
 texTierra.colorSpace = texSuelo.colorSpace = texLadrillo.colorSpace = THREE.SRGBColorSpace;
 
 // CREAR EL MATERIAL
 const MATERIALES = {
+    cielo: new THREE.MeshLambertMaterial({map: textFondo}),
     suelo: new THREE.MeshLambertMaterial({map: texSuelo}), 
     tierra: new THREE.MeshLambertMaterial({map: texTierra}), 
     ladrillo: new THREE.MeshLambertMaterial({map: texLadrillo}),
     sorpresa: new THREE.MeshLambertMaterial({map: texSorpresa}),
+    
 }
 
 const GEO_BLOQUE = new THREE.BoxGeometry(1,1,1);
@@ -180,7 +186,7 @@ function crearBloque(x,y,tipo) {
     const material = {
         "#": MATERIALES.suelo,
         "B": MATERIALES.ladrillo,
-        "G": MATERIALES.sorpresa
+        "G": MATERIALES.sorpresa,
     }[tipo];
 
     const malla = new THREE.Mesh(GEO_BLOQUE,material);
@@ -196,7 +202,6 @@ function crearBloque(x,y,tipo) {
     }
 
 }
-
 
 function animate(time) {
     renderer.render(scene, camera);
